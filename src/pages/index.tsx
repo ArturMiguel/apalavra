@@ -3,44 +3,34 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import styles from "../styles/index.module.scss";
 import { CSSProperties, useState } from "react";
+import { defaultLetter, correctLetter, wrongLetter, partialLetter } from "../styles/letters";
+import { LetterFeedbackEnum } from "../enums/LetterFeedbackEnum";
 
 const Home: NextPage = () => {
-  const word = "VASCO";
-  const [activeWord, setActiveWord] = useState<number>();
+  const wordLength = 5;
+  const puzzle = Array(6).fill(0).map(_ => Array(wordLength).fill(LetterFeedbackEnum.DEFAULT));
 
   const puzzleGrid: CSSProperties = {
     display: "grid",
-    gridTemplateColumns: `repeat(${word.length}, minmax(auto, 4rem))`,
-    gridTemplateRows: "repeat(6, 4rem)",
-    gap: "0.5rem"
+    gridTemplateColumns: `repeat(${wordLength}, minmax(auto, 3rem))`,
+    gridTemplateRows: "repeat(6, 3rem)",
+    gap: "0.6rem"
   }
 
   return (
     <div className={styles.container} >
       <Box sx={puzzleGrid} >
-        {Array.from(Array(word.length * 6)).map((_, index) => (
+        {puzzle.map((word, line) => word.map((_, column) => (
           <Box
-            key={index}
-            sx={{
-              "& > :not(style)": {
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                height: "100%",
-                border: "1px solid grey",
-                cursor: "pointer",
-                background: "green",
-                fontWeight: "bold"
-              }
-            }}
-            onClick={() => setActiveWord(index)}
+            key={column}
+            sx={defaultLetter}
+            onClick={() => console.log(`Line ${line}, column ${column}`)}
           >
-            <Paper elevation={activeWord == index ? 3 : 0}>
-              {index}
+            <Paper elevation={0}>
+              
             </Paper>
           </Box>
-        ))}
+        )))}
       </Box>
     </div>
   )

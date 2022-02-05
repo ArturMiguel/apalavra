@@ -1,4 +1,4 @@
-export const defaultLetter = {
+export const defaultLetterStyle = {
   "& > :not(style)": {
     display: "flex",
     justifyContent: "center",
@@ -11,29 +11,29 @@ export const defaultLetter = {
   }
 }
 
-export const correctLetter = {
+export const correctLetterStyle = {
   "& > :not(style)": {
-    ...defaultLetter["& > :not(style)"],
+    ...defaultLetterStyle["& > :not(style)"],
     color: "#fff",
     background: "#018E42",
     border: "none"
   }
 }
 
-export const wrongLetter = {
+export const wrongLetterStyle = {
   "& > :not(style)": {
-    ...defaultLetter["& > :not(style)"],
+    ...defaultLetterStyle["& > :not(style)"],
     color: "#fff",
-    background: "#150811",
+    background: "#ff6363",
     border: "none"
   }
 }
 
-export const partialLetter = {
+export const partialLetterStyle = {
   "& > :not(style)": {
-    ...defaultLetter["& > :not(style)"],
+    ...defaultLetterStyle["& > :not(style)"],
     color: "#fff",
-    background: "#F7D002",
+    background: "#ffa959",
     border: "none"
   }
 }

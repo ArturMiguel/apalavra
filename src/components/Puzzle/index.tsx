@@ -29,14 +29,14 @@ const Puzzle: NextPage = () => {
 
   const puzzleGrid: CSSProperties = {
     display: "grid",
-    gridTemplateColumns: `repeat(${wordLength}, minmax(auto, 3rem))`,
+    gridTemplateColumns: `repeat(${wordLength}, minmax(auto, 3.5rem))`,
     gridTemplateRows: "repeat(6, 3rem)",
     gap: "0.6rem",
   }
 
   const keyboardGrid: CSSProperties = {
     display: "grid",
-    gridTemplateColumns: `repeat(10, minmax(auto, 3rem))`,
+    gridTemplateColumns: `repeat(10, minmax(auto, 2.5rem))`,
     gridTemplateRows: "repeat(3, 3rem)",
     gap: "0.6rem",
     marginTop: "1rem"

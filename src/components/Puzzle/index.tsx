@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import { LetterFeedbackEnum } from "../../enums/LetterFeedbackEnum";
 import { defaultLetterStyle, correctLetterStyle, wrongLetterStyle, partialLetterStyle } from "./letterStyles";
 import { LetterDTO } from "../../dtos/LetterDTO";
+import styles from "./styles.module.scss";
 
 const Puzzle: NextPage = () => {
   const wordLength = 5;
@@ -37,7 +38,8 @@ const Puzzle: NextPage = () => {
     display: "grid",
     gridTemplateColumns: `repeat(10, minmax(auto, 3rem))`,
     gridTemplateRows: "repeat(3, 3rem)",
-    gap: "0.6rem"
+    gap: "0.6rem",
+    marginTop: "1rem"
   }
 
   function updatePosition(line: number, column: number) {
@@ -87,9 +89,7 @@ const Puzzle: NextPage = () => {
   }
 
   return (
-    <div>
-      <div>Linha: {currentLine}</div>
-      <div>Coluna: {currentColumn}</div>
+    <div className={styles.container}>
       <Box sx={puzzleGrid} >
         {puzzle.map((word, line) => word.map((_, column) => (
           <Box

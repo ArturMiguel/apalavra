@@ -1,21 +1,18 @@
-import { NextPage } from "next";
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
-import { LetterFeedbackEnum } from "../../enums/LetterFeedbackEnum";
+import { LetterFeedbackEnum } from "../../types/enums/LetterFeedbackEnum";
 import { defaultLetterStyle, correctLetterStyle, wrongLetterStyle, partialLetterStyle } from "./letterStyles";
-import { LetterDTO } from "../../dtos/LetterDTO";
+import { LetterDTO } from "../../types/dtos/LetterDTO";
 import styles from "./styles.module.scss";
 import Confetti from "../Confetti";
-import { StatusGameEnum } from "../../enums/StatusGameEnum";
+import { StatusGameEnum } from "../../types/enums/StatusGameEnum";
 
-const Puzzle: NextPage = () => {
-  const wordLength = 5;
-  const word = "VASCO";
+export default function Puzzle({ word }) {
   const [currentLine, setCurrentLine] = useState(0);
   const [currentColumn, setCurrentColumn] = useState(0);
   const [puzzle, setPuzzle] = useState<LetterDTO[][]>(
-    Array.from({ length: 6 }, () => Array.from({ length: wordLength }, () => {
+    Array.from({ length: 6 }, () => Array.from({ length: word.noAccent.length }, () => {
       return {
         feedback: LetterFeedbackEnum.DEFAULT,
         guess: null
@@ -31,7 +28,7 @@ const Puzzle: NextPage = () => {
 
   const puzzleGrid: CSSProperties = {
     display: "grid",
-    gridTemplateColumns: `repeat(${wordLength}, minmax(auto, 3.2rem))`,
+    gridTemplateColumns: `repeat(${word.noAccent.length}, minmax(auto, 3.2rem))`,
     gridTemplateRows: "repeat(6, 2.5rem)",
     gap: "0.6rem",
   }
@@ -55,12 +52,12 @@ const Puzzle: NextPage = () => {
     const copy = [...puzzle];
     if (key == "ENTER") {
       const guess = copy[currentLine].map(line => line.guess).join("");
-      if (guess.length != wordLength) return;
+      if (guess.length != word.noAccent.length) return;
       let totalCorrect = 0;
-      for (let c = 0; c < wordLength; c++) {
-        if (!word.includes(guess[c])) {
+      for (let c = 0; c < word.noAccent.length; c++) {
+        if (!word.noAccent.includes(guess[c])) {
           copy[currentLine][c].feedback = LetterFeedbackEnum.WRONG;
-        } else if (word[c] == guess[c]) {
+        } else if (word.noAccent[c] == guess[c]) {
           copy[currentLine][c].feedback = LetterFeedbackEnum.CORRECT;
           totalCorrect++;
         } else {
@@ -68,7 +65,7 @@ const Puzzle: NextPage = () => {
         }
       }
       setPuzzle(copy);
-      if (totalCorrect == wordLength) {
+      if (totalCorrect == word.noAccent.length) {
         setGameResult(StatusGameEnum.SUCCESS);
         return;
       }
@@ -82,7 +79,7 @@ const Puzzle: NextPage = () => {
       updatePosition(currentLine, previousColumn);
       setPuzzle(copy);
     } else {
-      if (currentColumn == wordLength) return;
+      if (currentColumn == word.noAccent.length) return;
       const nextColumn = currentColumn + 1;
       copy[currentLine][currentColumn].guess = key;
       updatePosition(currentLine, nextColumn);
@@ -95,7 +92,7 @@ const Puzzle: NextPage = () => {
       {(gameResult == StatusGameEnum.SUCCESS) && <Confetti />}
       <div className={styles.container}>
         <Box sx={puzzleGrid} >
-          {puzzle.map((word, line) => word.map((_, column) => (
+          {puzzle.map((_word, line) => _word.map((_, column) => (
             <Box key={column} sx={() => {
               const feedback = puzzle[line][column].feedback;
               switch (feedback) {
@@ -136,5 +133,3 @@ const Puzzle: NextPage = () => {
     </>
   )
 }
-
-export default Puzzle;

@@ -1,12 +1,21 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps } from "next";
 import Puzzle from "../components/Puzzle";
+import { WordEntity } from "../database/entities/WordEntity";
 
-const Home: NextPage = () => {
+export default function Home({ word }) {
   return (
     <div>
-      <Puzzle />
+      <Puzzle word={word} />
     </div>
   )
 }
 
-export default Home;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const words = await WordEntity.find();
+  const random = Math.floor(Math.random() * words.length) + 1
+  return {
+    props: {
+      word: JSON.parse(JSON.stringify(words[random]))
+    } // will be passed to the page component as props
+  }
+}

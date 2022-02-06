@@ -1,11 +1,13 @@
 import { NextPage } from "next";
-import { CSSProperties, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import { LetterFeedbackEnum } from "../../enums/LetterFeedbackEnum";
 import { defaultLetterStyle, correctLetterStyle, wrongLetterStyle, partialLetterStyle } from "./letterStyles";
 import { LetterDTO } from "../../dtos/LetterDTO";
 import styles from "./styles.module.scss";
+import Confetti from "../Confetti";
+import { StatusGameEnum } from "../../enums/StatusGameEnum";
 
 const Puzzle: NextPage = () => {
   const wordLength = 5;
@@ -25,20 +27,20 @@ const Puzzle: NextPage = () => {
     ["A", "S", "D", "F", "G", "H", "J", "K", "L", "⌫"],
     ["Z", "X", "C", "V", "B", "N", "M", "ENTER"],
   ];
-  const [endedGame, setEndedGame] = useState(false);
+  const [gameResult, setGameResult] = useState<string>();
 
   const puzzleGrid: CSSProperties = {
     display: "grid",
-    gridTemplateColumns: `repeat(${wordLength}, minmax(auto, 3.5rem))`,
-    gridTemplateRows: "repeat(6, 3rem)",
+    gridTemplateColumns: `repeat(${wordLength}, minmax(auto, 3.2rem))`,
+    gridTemplateRows: "repeat(6, 2.5rem)",
     gap: "0.6rem",
   }
 
   const keyboardGrid: CSSProperties = {
     display: "grid",
-    gridTemplateColumns: `repeat(10, minmax(auto, 2.5rem))`,
-    gridTemplateRows: "repeat(3, 3rem)",
-    gap: "0.6rem",
+    gridTemplateColumns: `repeat(10, minmax(auto, 2rem))`,
+    gridTemplateRows: "repeat(3, 2.5rem)",
+    gap: "0.5rem",
     marginTop: "1rem"
   }
 
@@ -48,7 +50,7 @@ const Puzzle: NextPage = () => {
   }
 
   function handleKeyboard(line: number, column: number) {
-    if (endedGame) return;
+    if (gameResult) return;
     const key = keyboard[line][column];
     const copy = [...puzzle];
     if (key == "ENTER") {
@@ -65,36 +67,36 @@ const Puzzle: NextPage = () => {
           copy[currentLine][c].feedback = LetterFeedbackEnum.PARTIAL;
         }
       }
+      setPuzzle(copy);
       if (totalCorrect == wordLength) {
-        setEndedGame(true);
+        setGameResult(StatusGameEnum.SUCCESS);
         return;
       }
-      if (currentLine == 5) setEndedGame(true);
-      setPuzzle(copy);
+      if (currentLine == 5) setGameResult(StatusGameEnum.FAILED);
       updatePosition(currentLine + 1, 0);
     } else if (key == "⌫") {
       if (currentColumn == 0) return;
       const previousColumn = currentColumn - 1;
-      updatePosition(currentLine, previousColumn);
       copy[currentLine][previousColumn].guess = null;
       copy[currentLine][previousColumn].feedback = LetterFeedbackEnum.DEFAULT;
+      updatePosition(currentLine, previousColumn);
       setPuzzle(copy);
     } else {
       if (currentColumn == wordLength) return;
       const nextColumn = currentColumn + 1;
-      updatePosition(currentLine, nextColumn);
       copy[currentLine][currentColumn].guess = key;
+      updatePosition(currentLine, nextColumn);
       setPuzzle(copy);
     }
   }
 
   return (
-    <div className={styles.container}>
-      <Box sx={puzzleGrid} >
-        {puzzle.map((word, line) => word.map((_, column) => (
-          <Box
-            key={column}
-            sx={() => {
+    <>
+      {(gameResult == StatusGameEnum.SUCCESS) && <Confetti />}
+      <div className={styles.container}>
+        <Box sx={puzzleGrid} >
+          {puzzle.map((word, line) => word.map((_, column) => (
+            <Box key={column} sx={() => {
               const feedback = puzzle[line][column].feedback;
               switch (feedback) {
                 case LetterFeedbackEnum.CORRECT:
@@ -107,28 +109,31 @@ const Puzzle: NextPage = () => {
                   return defaultLetterStyle;
               }
             }}
-          >
-            <Paper elevation={currentLine == line && currentColumn == column ? 4 : 0}>
-              {puzzle[line][column].guess}
-            </Paper>
-          </Box>
-        )))}
-      </Box>
-      <Box sx={keyboardGrid} >
-        {keyboard.map((keys, line) => keys.map((_, column) => (
-          <Box
-            key={column}
-            sx={defaultLetterStyle}
-            style={keyboard[line][column] == "ENTER" ? { gridColumn: "span 3" } : {}}
-            onClick={() => handleKeyboard(line, column)}
-          >
-            <Paper elevation={0}>
-              {keyboard[line][column]}
-            </Paper>
-          </Box>
-        )))}
-      </Box>
-    </div>
+            >
+              <Paper elevation={currentLine == line && currentColumn == column ? 4 : 0}>
+                <div className={styles.letter}>
+                  {puzzle[line][column].guess}
+                </div>
+              </Paper>
+            </Box>
+          )))}
+        </Box>
+        <Box sx={keyboardGrid} >
+          {keyboard.map((keys, line) => keys.map((_, column) => (
+            <Box
+              key={column}
+              sx={defaultLetterStyle}
+              style={keyboard[line][column] == "ENTER" ? { gridColumn: "span 3" } : {}}
+              onClick={() => handleKeyboard(line, column)}
+            >
+              <Paper elevation={0}>
+                {keyboard[line][column]}
+              </Paper>
+            </Box>
+          )))}
+        </Box>
+      </div>
+    </>
   )
 }
 

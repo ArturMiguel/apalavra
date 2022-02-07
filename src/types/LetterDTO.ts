@@ -1,4 +1,4 @@
-import { LetterFeedbackEnum } from "../enums/LetterFeedbackEnum";
+import { LetterFeedbackEnum } from "./LetterFeedbackEnum";
 
 export interface LetterDTO {
     guess: string | null;

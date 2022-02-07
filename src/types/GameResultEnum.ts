@@ -1,4 +1,4 @@
-export enum StatusGameEnum {
+export enum GameResultEnum {
     "SUCCESS" = "S",
     "FAILED" = "F"
 }

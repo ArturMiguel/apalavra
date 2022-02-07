@@ -1,6 +1,6 @@
 import type { GetServerSideProps } from "next";
-import Puzzle from "../components/Puzzle";
-import { WordEntity } from "../database/entities/WordEntity";
+import Puzzle from "../components/Game";
+import { words } from "../words";
 
 export default function Home({ word }) {
   return (
@@ -11,11 +11,11 @@ export default function Home({ word }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const words = await WordEntity.find();
-  const random = Math.floor(Math.random() * words.length) + 1
+  const index = 10; // TODO Implementar rotina para definir o indice da palavra do dia
+  const word = words[index];
   return {
     props: {
-      word: JSON.parse(JSON.stringify(words[random]))
-    } // will be passed to the page component as props
+      word: JSON.parse(JSON.stringify(word))
+    }
   }
 }

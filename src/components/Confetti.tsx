@@ -1,7 +1,6 @@
-import { NextPage } from "next"
 import ReactConfetti from "react-confetti";
 
-const Confetti: NextPage = () => {
+export default function Confetti() {
   return (
     <ReactConfetti
       width={window.innerWidth}
@@ -11,5 +10,3 @@ const Confetti: NextPage = () => {
     ></ReactConfetti>
   )
 }
-
-export default Confetti;

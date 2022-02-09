@@ -1,6 +1,6 @@
 import mongoose from "../connection";
 
-let wordEntity: mongoose.Model<any, {}, {}, {}>;
+let wordEntity: mongoose.Model<any>;
 
 try {
   wordEntity = mongoose.model("words", new mongoose.Schema({

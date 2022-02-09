@@ -1,25 +1,22 @@
 import { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
-import { LetterFeedbackEnum } from "../../types/LetterFeedbackEnum";
-import { defaultLetterStyle, correctLetterStyle, wrongLetterStyle, partialLetterStyle } from "../../styles/letterStyles";
-import { LetterDTO } from "../../types/LetterDTO";
-import styles from "./styles.module.scss";
 import Confetti from "../Confetti";
-import { GameResultEnum } from "../../types/GameResultEnum";
 import Keyboard from "../Keyboard";
+import { LetterDTO } from "../../types/LetterDTO";
+import { GameResultEnum } from "../../types/GameResultEnum";
+import { FeedbackEnum } from "../../types/FeedbackEnum";
+import { defaultLetterStyle, correctLetterStyle, wrongLetterStyle, partialLetterStyle } from "../../styles/letterStyles";
+import styles from "./styles.module.scss";
+import { GamePropsDTO } from "../../types/GamePropsDTO";
 
-export default function Game({ word }) {
-  const [game, setGame] = useState<LetterDTO[][]>(
-    Array.from({ length: 6 }, () => Array.from({ length: word.length }, () => {
-      return {
-        feedback: LetterFeedbackEnum.DEFAULT,
-        guess: null
-      }
-    }))
-  );
-  const [line, setLine] = useState(0);
-  const [column, setColumn] = useState(0);
+export default function Game({ word }: GamePropsDTO) {
+  const [game, setGame] = useState<LetterDTO[]>(Array.from({ length: word.length * 6 }, () => {
+    return {
+      guess: null,
+      feedback: FeedbackEnum.DEFAULT
+    }
+  }));
   const [gameResult, setGameResult] = useState<string>();
 
   function handleKeyboard(key: string) {
@@ -28,57 +25,47 @@ export default function Game({ word }) {
     return handleKey(key);
   }
 
-  function updatePosition(line: number, column: number) {
-    setLine(line);
-    setColumn(column);
+  function getCurrentGuess() {
+    const start = game.findIndex(l => l.feedback == FeedbackEnum.DEFAULT && l.guess);
+    const end = game.findIndex(l => l.feedback == FeedbackEnum.DEFAULT && !l.guess);
+    return game.slice(start, end);
   }
 
   function handleKey(key: string) {
-    if (column == word.length) return;
+    if (getCurrentGuess().length == word.length) return;
     const copy = [...game];
-    copy[line][column].guess = key;
-    updatePosition(line, column + 1);
+    copy[copy.findIndex(value => !value.guess)].guess = key;
     setGame(copy);
   }
 
   function handleClear() {
-    if (column == 0 || gameResult == GameResultEnum.SUCCESS || gameResult == GameResultEnum.FAILED) return;
     const copy = [...game];
-    const previousColumn = column - 1;
-    copy[line][previousColumn].guess = null;
-    copy[line][previousColumn].feedback = LetterFeedbackEnum.DEFAULT;
-    updatePosition(line, previousColumn);
+    const index = copy.map(l => l.guess).join("").length - 1;
+    if (index < 0 || copy[index].feedback != FeedbackEnum.DEFAULT) return;
+    copy[index] = { feedback: FeedbackEnum.DEFAULT, guess: null };
     setGame(copy);
   }
 
   function handleEnter() {
-    const copy = [...game];
-    const guess = copy[line].map(line => line.guess).join("");
+    const guess = getCurrentGuess();
     if (guess.length != word.length) return;
-    let totalCorrect = 0;
-    for (let c = 0; c < word.length; c++) {
-      if (!word.includes(guess[c])) {
-        copy[line][c].feedback = LetterFeedbackEnum.WRONG;
-      } else if (word[c] == guess[c]) {
-        copy[line][c].feedback = LetterFeedbackEnum.CORRECT;
-        totalCorrect++;
+    const copy = [...game];
+    for (let i = 0; i < word.length; i++) {
+      let index = copy.findIndex(l => l.feedback == FeedbackEnum.DEFAULT);
+      if (word[i] == guess[i].guess) {
+        guess[i].feedback = FeedbackEnum.CORRECT;
       } else {
-        copy[line][c].feedback = LetterFeedbackEnum.PARTIAL;
+        guess[i].feedback = FeedbackEnum.WRONG;
       }
+      copy.splice(index, 1, guess[i]);
     }
     setGame(copy);
-    if (totalCorrect == word.length) {
-      setGameResult(GameResultEnum.SUCCESS);
-      return;
-    }
-    if (line == 5) setGameResult(GameResultEnum.FAILED);
-    updatePosition(line + 1, 0);
   }
 
-  function letterStyle(feedback: LetterFeedbackEnum) {
-    if (feedback == LetterFeedbackEnum.CORRECT) return correctLetterStyle;
-    if (feedback == LetterFeedbackEnum.WRONG) return wrongLetterStyle;
-    if (feedback == LetterFeedbackEnum.PARTIAL) return partialLetterStyle;
+  function letterStyle(f: FeedbackEnum) {
+    if (f == FeedbackEnum.CORRECT) return correctLetterStyle;
+    if (f == FeedbackEnum.WRONG) return wrongLetterStyle;
+    if (f == FeedbackEnum.PARTIAL) return partialLetterStyle;
     return defaultLetterStyle;
   }
 
@@ -92,15 +79,15 @@ export default function Game({ word }) {
           gridTemplateRows: "repeat(6, 2.5rem)",
           gap: "0.6rem",
         }} >
-          {game.map((_word, l) => _word.map((_, c) => (
-            <Box key={c} sx={() => letterStyle(game[l][c].feedback)}>
-              <Paper elevation={l == line && c == column ? 4 : 0}>
+          {game.map((letter, index) => (
+            <Box key={index} sx={() => letterStyle(letter.feedback)}>
+              <Paper elevation={game.map(l => l.guess).join("").length == index && getCurrentGuess().length != word.length ? 4 : 0}>
                 <div className={styles.letter}>
-                  {game[l][c].guess}
+                  {game[index].guess}
                 </div>
               </Paper>
             </Box>
-          )))}
+          ))}
         </Box>
         <Keyboard handleKeyboard={handleKeyboard} />
       </div>

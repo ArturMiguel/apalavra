@@ -15,7 +15,7 @@ export const correctLetterStyle = {
   "& > :not(style)": {
     ...defaultLetterStyle["& > :not(style)"],
     color: "#fff",
-    background: "#018E42",
+    background: "#04E762",
     border: "none"
   }
 }
@@ -24,7 +24,7 @@ export const wrongLetterStyle = {
   "& > :not(style)": {
     ...defaultLetterStyle["& > :not(style)"],
     color: "#fff",
-    background: "#ff6363",
+    background: "#454545",
     border: "none"
   }
 }
@@ -33,7 +33,7 @@ export const partialLetterStyle = {
   "& > :not(style)": {
     ...defaultLetterStyle["& > :not(style)"],
     color: "#fff",
-    background: "#ffa959",
+    background: "#F5B700",
     border: "none"
   }
 }

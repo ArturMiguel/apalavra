@@ -1,6 +1,6 @@
 import { FeedbackEnum } from "./FeedbackEnum";
 
-export interface LetterDTO {
-    guess: string | null;
+export interface GuessDTO {
+    key: string | null;
     feedback: FeedbackEnum;
 }

@@ -20,7 +20,7 @@ export default function Game({ word }: GamePropsDTO) {
   );
   const [line, setLine] = useState(0);
   const [column, setColumn] = useState(0);
-  const [gameResult, setGameResult] = useState<string>();
+  const [gameResult, setGameResult] = useState<string>(null);
   const keys = [
     "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
     "A", "S", "D", "F", "G", "H", "J", "K", "L", "⌫",
@@ -28,6 +28,7 @@ export default function Game({ word }: GamePropsDTO) {
   ];
 
   function handleKeyboard(key: string) {
+    if (gameResult) return;
     if (key == "ENTER") return handleEnter();
     if (key == "⌫") return handleClear();
     return handleKey(key);
@@ -69,7 +70,12 @@ export default function Game({ word }: GamePropsDTO) {
         copy[line][i].feedback = FeedbackEnum.PARTIAL;
       }
     }
-    updatePosition(line + 1, 0);
+    const corrects = copy[line].filter(l => l.feedback == FeedbackEnum.CORRECT).length;
+    if (corrects == word.length || line == 5) {
+      setGameResult(corrects == word.length ? GameResultEnum.SUCCESS : GameResultEnum.FAILED);
+    } else {
+      updatePosition(line + 1, 0);
+    }
     setGame(copy);
   }
 

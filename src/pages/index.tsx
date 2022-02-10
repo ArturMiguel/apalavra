@@ -11,7 +11,8 @@ export default function Home({ word }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const word =  words[1469];
+  const word =  words[1975];
+  console.log(word)
   return {
     props: {
       word: JSON.parse(JSON.stringify(word))

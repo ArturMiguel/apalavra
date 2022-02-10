@@ -66,7 +66,7 @@ export default function Game({ word }: GamePropsDTO) {
       const ocurrences = word.split("").filter(w => w == copy[line][i].key).length;
       const corrects = copy[line].filter(l => l.feedback == FeedbackEnum.CORRECT && l.key == copy[line][i].key).length;
       const partials = copy[line].filter(l => l.feedback == FeedbackEnum.PARTIAL && l.key == copy[line][i].key).length;
-      if (copy[line][i].feedback == FeedbackEnum.WRONG && word.includes(copy[line][i].key) && ocurrences != corrects && ocurrences != partials) {
+      if (copy[line][i].feedback == FeedbackEnum.WRONG && word.includes(copy[line][i].key) && ocurrences != corrects + partials) {
         copy[line][i].feedback = FeedbackEnum.PARTIAL;
       }
     }
@@ -79,10 +79,22 @@ export default function Game({ word }: GamePropsDTO) {
     setGame(copy);
   }
 
-  function letterStyle(f: FeedbackEnum) {
+  function gameStyle(f: FeedbackEnum) {
     if (f == FeedbackEnum.CORRECT) return correctLetterStyle;
     if (f == FeedbackEnum.WRONG) return wrongLetterStyle;
     if (f == FeedbackEnum.PARTIAL) return partialLetterStyle;
+    return defaultLetterStyle;
+  }
+
+  function keyboardStyle(key: string) {
+    const feedbacks = game.filter(a => a.filter(b => b.key == key).length).map(a => a.filter(b => b.key == key)).map(a => a.map(b => b.feedback)).join();
+    if (feedbacks.includes(FeedbackEnum.CORRECT)) {
+      return correctLetterStyle;
+    } else if (feedbacks.includes(FeedbackEnum.PARTIAL)) {
+      return partialLetterStyle;
+    } else if (feedbacks.includes(FeedbackEnum.WRONG)) {
+      return wrongLetterStyle;
+    }
     return defaultLetterStyle;
   }
 
@@ -97,7 +109,7 @@ export default function Game({ word }: GamePropsDTO) {
           gap: "0.6rem",
         }} >
           {game.map((pos, l) => pos.map((_, c) => (
-            <Box key={c} sx={() => letterStyle(pos[c].feedback)}>
+            <Box key={c} sx={() => gameStyle(pos[c].feedback)}>
               <Paper elevation={l == line && c == column ? 4 : 0}>
                 <div className={styles.letter}>
                   {pos[c].key}
@@ -110,7 +122,7 @@ export default function Game({ word }: GamePropsDTO) {
           {keys.map(key => (
             <Box
               key={key}
-              sx={() => letterStyle(FeedbackEnum.DEFAULT)}
+              sx={() => keyboardStyle(key)}
               style={key == "ENTER" ? { gridColumn: "span 3" } : {}}
               onClick={() => handleKeyboard(key)}
             >

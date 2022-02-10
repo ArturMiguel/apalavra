@@ -8,8 +8,9 @@ import { FeedbackEnum } from "../../types/FeedbackEnum";
 import { GamePropsDTO } from "../../types/GamePropsDTO";
 import { defaultLetterStyle, correctLetterStyle, wrongLetterStyle, partialLetterStyle } from "../../styles/letterStyles";
 import styles from "./styles.module.scss";
+import Snackbar from "../Snackbar";
 
-export default function Game({ word }: GamePropsDTO) {
+export default function Game({ word, words }: GamePropsDTO) {
   const [game, setGame] = useState<GuessDTO[][]>(
     Array.from({ length: 6 }, () => Array.from({ length: word.length }, () => {
       return {
@@ -26,6 +27,7 @@ export default function Game({ word }: GamePropsDTO) {
     "A", "S", "D", "F", "G", "H", "J", "K", "L", "⌫",
     "Z", "X", "C", "V", "B", "N", "M", "ENTER",
   ];
+  const [isValid, setIsValid] = useState(true);
 
   function handleKeyboard(key: string) {
     if (gameResult) return;
@@ -59,9 +61,17 @@ export default function Game({ word }: GamePropsDTO) {
   function handleEnter() {
     if (column != word.length) return;
     const copy = [...game];
+
+    const valid = words.includes(copy[line].map(l => l.key).join(""));
+    if (!valid) {
+      setIsValid(false)
+      return;
+    }
+
     for (let i = 0; i < word.length; i++) {
       copy[line][i].feedback = word[i] == copy[line][i].key ? FeedbackEnum.CORRECT : FeedbackEnum.WRONG;
     }
+
     for (let i = 0; i < word.length; i++) {
       const ocurrences = word.split("").filter(w => w == copy[line][i].key).length;
       const corrects = copy[line].filter(l => l.feedback == FeedbackEnum.CORRECT && l.key == copy[line][i].key).length;
@@ -70,6 +80,7 @@ export default function Game({ word }: GamePropsDTO) {
         copy[line][i].feedback = FeedbackEnum.PARTIAL;
       }
     }
+
     const corrects = copy[line].filter(l => l.feedback == FeedbackEnum.CORRECT).length;
     if (corrects == word.length || line == 5) {
       setGameResult(corrects == word.length ? GameResultEnum.SUCCESS : GameResultEnum.FAILED);
@@ -101,6 +112,9 @@ export default function Game({ word }: GamePropsDTO) {
   return (
     <>
       {(gameResult == GameResultEnum.SUCCESS) && <Confetti />}
+
+      <Snackbar message="PALAVRA NÃO ENCONTRADA" open={!isValid} onClose={() => setIsValid(true)}/>
+
       <div className={styles.container}>
         <Box sx={{
           display: "grid",

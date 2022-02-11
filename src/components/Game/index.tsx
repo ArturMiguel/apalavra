@@ -9,6 +9,8 @@ import { GamePropsDTO } from "../../types/GamePropsDTO";
 import { defaultLetterStyle, correctLetterStyle, wrongLetterStyle, partialLetterStyle } from "../../styles/letterStyles";
 import styles from "./styles.module.scss";
 import Snackbar from "../Snackbar";
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 
 export default function Game({ word, words }: GamePropsDTO) {
   const [game, setGame] = useState<GuessDTO[][]>(
@@ -109,11 +111,55 @@ export default function Game({ word, words }: GamePropsDTO) {
     return defaultLetterStyle;
   }
 
+  function gameHasEmoticon() {
+    return game.slice(0, line + 1).map((pos, l) => (
+      <>
+        {
+          pos.map((_, c) => {
+            if (pos[c].feedback == FeedbackEnum.CORRECT) {
+              return <span>🟩</span>
+            } else if (pos[c].feedback == FeedbackEnum.PARTIAL) {
+              return <span>🟧</span>
+            } else {
+              return <span>⬛</span>
+            }
+          })
+        }
+        <br />
+      </>
+    ))
+  }
+
   return (
     <>
+      <Modal
+        open={gameResult != null}
+        onClose={() => { }}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 400,
+          bgcolor: 'background.paper',
+          p: 4,
+        }}>
+          <Typography id="moda-title" variant="h6" component="h2">
+            {gameResult == GameResultEnum.SUCCESS ? "Você acertou!" : "Você falhou!"}
+          </Typography>
+          <Typography id="modal-description" sx={{ mt: 2 }}>
+            <p>Meu resultado ({line + 1}/6) em apalavra:</p>
+            {gameHasEmoticon()}
+          </Typography>
+        </Box>
+      </Modal>
+
       {(gameResult == GameResultEnum.SUCCESS) && <Confetti />}
 
-      <Snackbar message="PALAVRA NÃO ENCONTRADA" open={!isValid} onClose={() => setIsValid(true)}/>
+      <Snackbar message="PALAVRA NÃO ENCONTRADA" open={!isValid} onClose={() => setIsValid(true)} />
 
       <div className={styles.container}>
         <Box sx={{

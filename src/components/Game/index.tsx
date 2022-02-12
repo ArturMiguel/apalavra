@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Confetti from "../Confetti";
@@ -9,8 +9,7 @@ import { GamePropsDTO } from "../../types/GamePropsDTO";
 import { defaultLetterStyle, correctLetterStyle, wrongLetterStyle, partialLetterStyle } from "../../styles/letterStyles";
 import styles from "./styles.module.scss";
 import Snackbar from "../Snackbar";
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+import GameResultModal from "../GameResultModal";
 
 export default function Game({ word, words }: GamePropsDTO) {
   const [game, setGame] = useState<GuessDTO[][]>(
@@ -23,13 +22,14 @@ export default function Game({ word, words }: GamePropsDTO) {
   );
   const [line, setLine] = useState(0);
   const [column, setColumn] = useState(0);
-  const [gameResult, setGameResult] = useState<string>(null);
+  const [gameResult, setGameResult] = useState<GameResultEnum>(null);
   const keys = [
     "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
     "A", "S", "D", "F", "G", "H", "J", "K", "L", "⌫",
     "Z", "X", "C", "V", "B", "N", "M", "ENTER",
   ];
   const [isValid, setIsValid] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   function handleKeyboard(key: string) {
     if (gameResult) return;
@@ -111,57 +111,30 @@ export default function Game({ word, words }: GamePropsDTO) {
     return defaultLetterStyle;
   }
 
-  function gameHasEmoticon() {
-    return game.slice(0, line + 1).map((pos, l) => (
-      <>
-        {
-          pos.map((_, c) => {
-            if (pos[c].feedback == FeedbackEnum.CORRECT) {
-              return <span>🟩</span>
-            } else if (pos[c].feedback == FeedbackEnum.PARTIAL) {
-              return <span>🟧</span>
-            } else {
-              return <span>⬛</span>
-            }
-          })
-        }
-        <br />
-      </>
-    ))
-  }
+  useEffect(() => {
+    if (gameResult) setShowModal(true);
+  }, [gameResult]);
 
   return (
     <>
-      <Modal
-        open={gameResult != null}
-        onClose={() => { }}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 400,
-          bgcolor: 'background.paper',
-          p: 4,
-        }}>
-          <Typography id="moda-title" variant="h6" component="h2">
-            {gameResult == GameResultEnum.SUCCESS ? "Você acertou!" : "Você falhou!"}
-          </Typography>
-          <Typography id="modal-description" sx={{ mt: 2 }}>
-            <p>Meu resultado ({line + 1}/6) em apalavra:</p>
-            {gameHasEmoticon()}
-          </Typography>
-        </Box>
-      </Modal>
+      <GameResultModal
+        game={game}
+        line={line}
+        result={gameResult}
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        word={word}
+      />
 
       {(gameResult == GameResultEnum.SUCCESS) && <Confetti />}
 
-      <Snackbar message="PALAVRA NÃO ENCONTRADA" open={!isValid} onClose={() => setIsValid(true)} />
+      <Snackbar
+        message="PALAVRA NÃO ENCONTRADA"
+        open={!isValid}
+        onClose={() => setIsValid(true)}
+      />
 
-      <div className={styles.container}>
+      <div className={styles.container} onClick={() => setShowModal(gameResult != null)}>
         <Box sx={{
           display: "grid",
           gridTemplateColumns: `repeat(${word.length}, minmax(auto, 3.5rem))`,
@@ -170,7 +143,7 @@ export default function Game({ word, words }: GamePropsDTO) {
         }} >
           {game.map((pos, l) => pos.map((_, c) => (
             <Box key={c} sx={() => gameStyle(pos[c].feedback)}>
-              <Paper elevation={l == line && c == column ? 4 : 0}>
+              <Paper elevation={l == line && c == column ? 4 : 0} style={{ cursor: "default" }}>
                 <div className={styles.letter}>
                   {pos[c].key}
                 </div>

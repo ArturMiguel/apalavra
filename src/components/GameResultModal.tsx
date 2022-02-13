@@ -13,7 +13,7 @@ export default function GameResultModal({ game, result, line, show, onClose, wor
 
   const shareText = game.slice(0, line + 1).map((pos, l) => pos.map((_, c) => {
     let str = "";
-    if (pos[c].feedback == FeedbackEnum.CORRECT) str += `🟩`;
+    if (pos[c].feedback == FeedbackEnum.CORRECT) str += "🟩";
     else if (pos[c].feedback == FeedbackEnum.PARTIAL) str += "🟧";
     else if (pos[c].feedback == FeedbackEnum.WRONG) str += "⬛";
     if (c == word.length - 1 && l != line) str += "\n";
@@ -47,7 +47,7 @@ export default function GameResultModal({ game, result, line, show, onClose, wor
             <div>
               {result == GameResultEnum.SUCCESS ? "Parabéns. Você acertou!" : "Que pena. Você falhou!"}
             </div>
-            {result == GameResultEnum.FAILED && <div style={{ textAlign: "center" }}>`A palavra era<br></br> "{word}</div>}
+            {result == GameResultEnum.FAILED && <div style={{ textAlign: "center" }}>A palavra era &quot;{word}&quot;</div>}
             <textarea
               defaultValue={shareText}
               disabled

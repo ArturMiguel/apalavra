@@ -5,14 +5,50 @@
   flex-direction: column;
 }
 
-.letter {
-  font-size: 1.4rem;
-}
-
 .keyboard {
   display: grid;
   grid-template-columns: repeat(10, minmax(auto, 2rem));
   grid-template-rows: repeat(3, 2.8rem);
   gap: 0.5rem;
   margin-top: 1rem;
+  :last-child {
+    grid-column: span 3;
+  }
+}
+
+.defaultLetter {
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer !important;
+  font-weight: bold;
+  border: 1px solid grey;
+  border-radius: 3px;
+}
+
+.correctLetter {
+  @extend .defaultLetter;
+  color: #fff;
+  background: #04E762;
+  border: none;
+}
+
+.wrongLetter {
+  @extend .defaultLetter;
+  color: #fff;
+  background: #454545;
+  border: none;
+}
+
+.partialLetter {
+  @extend .defaultLetter;
+  color: #fff;
+  background: #F5B700;
+  border: none;
+}
+
+.enterKey {
+  @extend .defaultLetter;
+  grid-column: span 3 / auto;
 }

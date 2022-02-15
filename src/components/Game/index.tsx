@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Confetti from "../Confetti";
 import { GuessDTO } from "../../types/GuessDTO";
 import { GameResultEnum } from "../../types/GameResultEnum";
 import { FeedbackEnum } from "../../types/FeedbackEnum";
 import { GamePropsDTO } from "../../types/GamePropsDTO";
-import { defaultLetterStyle, correctLetterStyle, wrongLetterStyle, partialLetterStyle } from "../../styles/letterStyles";
 import styles from "./styles.module.scss";
-import Snackbar from "../Snackbar";
 import GameResultModal from "../GameResultModal";
+import { useDisclosure, useToast } from '@chakra-ui/react'
+import Confetti from "../Confetti";
 
 export default function Game({ word, words }: GamePropsDTO) {
   const [game, setGame] = useState<GuessDTO[][]>(
@@ -28,8 +25,8 @@ export default function Game({ word, words }: GamePropsDTO) {
     "A", "S", "D", "F", "G", "H", "J", "K", "L", "⌫",
     "Z", "X", "C", "V", "B", "N", "M", "ENTER",
   ];
-  const [isValid, setIsValid] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   function handleKeyboard(key: string) {
     if (gameResult) return;
@@ -66,9 +63,15 @@ export default function Game({ word, words }: GamePropsDTO) {
 
     const valid = words.includes(copy[line].map(l => l.key).join(""));
     if (!valid) {
-      setIsValid(false)
+      toast({
+        description: "Palavra não encontrada!",
+        status: "info",
+        duration: 1700,
+        isClosable: true,
+        variant: "solid"
+      });
       return;
-    }
+    };
 
     for (let i = 0; i < word.length; i++) {
       copy[line][i].feedback = word[i] == copy[line][i].key ? FeedbackEnum.CORRECT : FeedbackEnum.WRONG;
@@ -93,76 +96,59 @@ export default function Game({ word, words }: GamePropsDTO) {
   }
 
   function gameStyle(f: FeedbackEnum) {
-    if (f == FeedbackEnum.CORRECT) return correctLetterStyle;
-    if (f == FeedbackEnum.WRONG) return wrongLetterStyle;
-    if (f == FeedbackEnum.PARTIAL) return partialLetterStyle;
-    return defaultLetterStyle;
+    if (f == FeedbackEnum.CORRECT) return styles.correctLetter;
+    if (f == FeedbackEnum.WRONG) return styles.wrongLetter;
+    if (f == FeedbackEnum.PARTIAL) return styles.partialLetter;
+    return styles.defaultLetter;
   }
 
   function keyboardStyle(key: string) {
     const feedbacks = game.filter(a => a.filter(b => b.key == key).length).map(a => a.filter(b => b.key == key)).map(a => a.map(b => b.feedback)).join();
     if (feedbacks.includes(FeedbackEnum.CORRECT)) {
-      return correctLetterStyle;
+      return styles.correctLetter;
     } else if (feedbacks.includes(FeedbackEnum.PARTIAL)) {
-      return partialLetterStyle;
+      return styles.partialLetter;
     } else if (feedbacks.includes(FeedbackEnum.WRONG)) {
-      return wrongLetterStyle;
+      return styles.wrongLetter;
     }
-    return defaultLetterStyle;
+    return styles.defaultLetter;
   }
 
   useEffect(() => {
-    if (gameResult) setShowModal(true);
+    if (gameResult) onOpen();
   }, [gameResult]);
 
   return (
     <>
-      <GameResultModal
+      <Confetti fire={gameResult == GameResultEnum.SUCCESS} />
+
+      {isOpen && <GameResultModal
         game={game}
         line={line}
         result={gameResult}
-        show={showModal}
-        onClose={() => setShowModal(false)}
         word={word}
-      />
+        onClose={onClose}
+        isOpen={isOpen}
+      />}
 
-      {(gameResult == GameResultEnum.SUCCESS) && <Confetti />}
-
-      <Snackbar
-        message="PALAVRA NÃO ENCONTRADA"
-        open={!isValid}
-        onClose={() => setIsValid(true)}
-      />
-
-      <div className={styles.container} onClick={() => setShowModal(gameResult != null)}>
-        <Box sx={{
+      <div className={styles.container} onClick={() => gameResult && onOpen()}>
+        <div style={{
           display: "grid",
           gridTemplateColumns: `repeat(${word.length}, minmax(auto, 3.5rem))`,
           gridTemplateRows: "repeat(6, 3rem)",
           gap: "0.6rem",
-        }} >
+        }}>
           {game.map((pos, l) => pos.map((_, c) => (
-            <Box key={c} sx={() => gameStyle(pos[c].feedback)}>
-              <Paper elevation={l == line && c == column ? 4 : 0} style={{ cursor: "default" }}>
-                <div className={styles.letter}>
-                  {pos[c].key}
-                </div>
-              </Paper>
-            </Box>
+            <div key={c} className={gameStyle(pos[c].feedback)} style={{ fontSize: "1.2rem" }}>
+              {pos[c].key}
+            </div>
           )))}
-        </Box>
+        </div>
         <div className={styles.keyboard} >
           {keys.map(key => (
-            <Box
-              key={key}
-              sx={() => keyboardStyle(key)}
-              style={key == "ENTER" ? { gridColumn: "span 3" } : {}}
-              onClick={() => handleKeyboard(key)}
-            >
-              <Paper elevation={0}>
-                {key}
-              </Paper>
-            </Box>
+            <div key={key} className={keyboardStyle(key)} onClick={() => handleKeyboard(key)}>
+              {key}
+            </div>
           ))}
         </div>
       </div>

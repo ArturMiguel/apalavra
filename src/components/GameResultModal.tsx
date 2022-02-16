@@ -2,6 +2,7 @@ import { FeedbackEnum } from "../types/FeedbackEnum"
 import { GameResultEnum } from "../types/GameResultEnum";
 import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
 import React from "react";
+import copy from "copy-to-clipboard";
 
 export default function GameResultModal({ game, result, line, word, isOpen, onClose }) {
   const toast = useToast();
@@ -17,7 +18,7 @@ export default function GameResultModal({ game, result, line, word, isOpen, onCl
 
   function handleShare() {
     const msg = `Joguei apalavra.vercel.app\n\nTentativa ${line + 1}/6\n\n${shareText}`
-    navigator.clipboard.writeText(msg);
+    copy(msg);
     onClose();
     toast({
       description: "Copiado. Cole em alguma área de texto.",

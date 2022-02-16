@@ -134,7 +134,7 @@ export default function Game({ word, words }: GamePropsDTO) {
       <div className={styles.container} onClick={() => gameResult && onOpen()}>
         <div style={{
           display: "grid",
-          gridTemplateColumns: `repeat(${word.length}, minmax(auto, 3.5rem))`,
+          gridTemplateColumns: `repeat(${word.length}, 3.5rem)`,
           gridTemplateRows: "repeat(6, 3rem)",
           gap: "0.6rem",
         }}>

@@ -1,12 +1,18 @@
+import ReactCanvasConfetti from "react-canvas-confetti";
 import ReactConfetti from "react-confetti";
 
-export default function Confetti() {
+export default function Confetti({ fire }) {
   return (
-    <ReactConfetti
-      width={window.innerWidth}
-      height={window.innerHeight}
-      tweenDuration={1}
-      recycle={false}
-    ></ReactConfetti>
+    <div>
+     <ReactCanvasConfetti fire={fire} style={{
+        position: "fixed",
+        pointerEvents: "none",
+        width: "100%",
+        height: "100%",
+        zIndex: 2000,
+        top: 0,
+        left: 0
+      }} />
+    </div>
   )
 }

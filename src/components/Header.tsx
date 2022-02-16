@@ -1,5 +1,6 @@
 import { Center, Flex } from "@chakra-ui/react";
 import { GoMarkGithub, GoQuestion } from "react-icons/go";
+import HelpModal from "./HelpModal";
 
 export default function Header() {
   function goToGithub() {
@@ -9,7 +10,7 @@ export default function Header() {
   return (
     <Flex h="3rem" gap="4">
       <Center w="full" justifyContent="end">
-        <GoQuestion size="1.7rem" title="Instruções" cursor="pointer" />
+        <HelpModal />
       </Center>
       <Center w="full">
         <h2 style={{ fontSize: "1.7rem", fontWeight: "bold" }}>

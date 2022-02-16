@@ -30,7 +30,7 @@ export default function GameResultModal({ game, result, line, word, isOpen, onCl
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>

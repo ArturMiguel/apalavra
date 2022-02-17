@@ -24,8 +24,7 @@ export default function HelpModal() {
           <ModalCloseButton />
           <ModalBody>
             <p>
-              A cada dia é publicada uma palavra para você descobrir em 6 tentativas.
-              A palavra existe na lingua portuguesa (pt-BR) e pode ter 5 ou 6 letras.
+              <b>apalavra</b> é um jogo de adivinhar palavras da lingua portuguesa (pt-BR). As palavras podem ter 5 ou 6 letras e você tem 6 chances para descobrir. A cada dia é publicada uma nova palavra.
             </p>
             <br />
             <div>

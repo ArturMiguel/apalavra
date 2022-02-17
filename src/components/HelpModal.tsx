@@ -31,21 +31,21 @@ export default function HelpModal() {
             <div>
               <p style={{ marginBottom: "0.5rem" }}>As letras <b>corretas</b> serão coloridas de verde:</p>
               <HStack spacing="0.2rem">
-                {"CERTA".split("").map(l => <div className={gameStyle(FeedbackEnum.CORRECT)} style={{ fontSize: "1.2rem", width: "2rem" }}>{l}</div>)}
+                {"CERTA".split("").map((v, i) => <div key={i} className={gameStyle(FeedbackEnum.CORRECT)} style={{ fontSize: "1.2rem", width: "2rem" }}>{i}</div>)}
               </HStack>
             </div>
             <br />
             <div>
               <p style={{ marginBottom: "0.5rem" }}>As letras <b>corretas, porém na posição errada,</b> serão coloridas de laranja:</p>
               <HStack spacing="0.2rem">
-                {"QUASE".split("").map(l => <div className={gameStyle(FeedbackEnum.PARTIAL)} style={{ fontSize: "1.2rem", width: "2rem" }}>{l}</div>)}
+                {"QUASE".split("").map((v, i) => <div key={i} className={gameStyle(FeedbackEnum.PARTIAL)} style={{ fontSize: "1.2rem", width: "2rem" }}>{i}</div>)}
               </HStack>
             </div>
             <br />
             <div>
               <p style={{ marginBottom: "0.5rem" }}>As letras <b>erradas</b> serão coloridas de preto:</p>
               <HStack spacing="0.2rem">
-                {"ERRADA".split("").map(l => <div className={gameStyle(FeedbackEnum.WRONG)} style={{ fontSize: "1.2rem", width: "2rem" }}>{l}</div>)}
+                {"ERRADA".split("").map((v, i) => <div key={i} className={gameStyle(FeedbackEnum.WRONG)} style={{ fontSize: "1.2rem", width: "2rem" }}>{i}</div>)}
               </HStack>
             </div>
           </ModalBody>

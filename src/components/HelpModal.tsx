@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react"
+import { Button, HStack, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure } from "@chakra-ui/react"
 import { GoQuestion } from "react-icons/go"
 import { FeedbackEnum } from "../types/FeedbackEnum"
 import styles from "../components/Game/styles.module.scss";
@@ -20,19 +20,33 @@ export default function HelpModal() {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Ajuda</ModalHeader>
+          <ModalHeader>Instruções</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <p>
-              A cada dia é disponibilizada uma palavra para você descobrir em 6 tentativas. A palavra pode ter 5 ou 6 letras e existe na lingua portuguesa (pt-BR).
+              A cada dia é publicada uma palavra para você descobrir em 6 tentativas.
+              A palavra existe na lingua portuguesa (pt-BR) e pode ter 5 ou 6 letras.
             </p>
-            <p>
-              <b>Exemplos:</b>
-            </p>
+            <br />
             <div>
-              <div className={gameStyle(FeedbackEnum.CORRECT)} style={{ fontSize: "1.2rem" }}>
-                A
-              </div>
+              <p style={{ marginBottom: "0.5rem" }}>As letras <b>corretas</b> serão coloridas de verde:</p>
+              <HStack spacing="0.2rem">
+                {"CERTA".split("").map(l => <div className={gameStyle(FeedbackEnum.CORRECT)} style={{ fontSize: "1.2rem", width: "2rem" }}>{l}</div>)}
+              </HStack>
+            </div>
+            <br />
+            <div>
+              <p style={{ marginBottom: "0.5rem" }}>As letras <b>corretas, porém na posição errada,</b> serão coloridas de laranja:</p>
+              <HStack spacing="0.2rem">
+                {"QUASE".split("").map(l => <div className={gameStyle(FeedbackEnum.PARTIAL)} style={{ fontSize: "1.2rem", width: "2rem" }}>{l}</div>)}
+              </HStack>
+            </div>
+            <br />
+            <div>
+              <p style={{ marginBottom: "0.5rem" }}>As letras <b>erradas</b> serão coloridas de preto:</p>
+              <HStack spacing="0.2rem">
+                {"ERRADA".split("").map(l => <div className={gameStyle(FeedbackEnum.WRONG)} style={{ fontSize: "1.2rem", width: "2rem" }}>{l}</div>)}
+              </HStack>
             </div>
           </ModalBody>
           <ModalFooter>

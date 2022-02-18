@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GuessDTO } from "../../types/GuessDTO";
+import { GameDTO } from "../../types/GameDTO";
 import { GameResultEnum } from "../../types/GameResultEnum";
 import { FeedbackEnum } from "../../types/FeedbackEnum";
 import { GamePropsDTO } from "../../types/GamePropsDTO";
@@ -9,7 +9,7 @@ import { useDisclosure, useToast } from '@chakra-ui/react'
 import Confetti from "../Confetti";
 
 export default function Game({ word, words }: GamePropsDTO) {
-  const [game, setGame] = useState<GuessDTO[][]>(
+  const [game, setGame] = useState<GameDTO[][]>(
     Array.from({ length: 6 }, () => Array.from({ length: word.length }, () => {
       return {
         feedback: FeedbackEnum.DEFAULT,

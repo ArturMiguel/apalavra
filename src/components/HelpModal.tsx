@@ -24,7 +24,7 @@ export default function HelpModal() {
           <ModalCloseButton />
           <ModalBody>
             <p>
-              <b>apalavra</b> é um jogo de adivinhar palavras da lingua portuguesa (pt-BR). As palavras podem ter 5 ou 6 letras e você tem 6 chances para descobrir. A cada dia é publicada uma nova palavra.
+            <b>apalavra</b> é um jogo de adivinhar palavras da lingua portuguesa (pt-BR). As palavras podem ter 5 ou 6 letras. A cada dia é publicada uma nova palavra e você tem 6 chances para descobrir.
             </p>
             <br />
             <div>

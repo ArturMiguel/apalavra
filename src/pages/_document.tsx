@@ -10,8 +10,9 @@ class MyDocument extends Document {
     return (
       <Html lang="pt-BR">
         <Head>
-          <meta name="description" content="A cada dia é disponibilizada uma palavra para você adivinhar." />
-          <link rel="icon" href="/favicon.ico" />
+          <meta name="description" content="apalavra é um jogo de adivinhar palavras da lingua portuguesa (pt-BR). As palavras podem ter 5 ou 6 letras. A cada dia é publicada uma nova palavra e você tem 6 chances para descobrir." />
+          <meta name="keywords" content="game, puzzle, palavra" />
+          <meta name="author" content="https://www.linkedin.com/in/arturmiguelrocha/" />
         </Head>
         <body>
           <Main />

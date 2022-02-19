@@ -8,6 +8,7 @@ import GameResultModal from "../GameResultModal";
 import { useDisclosure, useToast } from '@chakra-ui/react'
 import Confetti from "../Confetti";
 import Clock from "../Clock";
+import { LocalStorage } from "../../services/LocalStorage";
 
 export default function Game({ wordDoc, words }: GamePropsDTO) {
   const { word, sequence } = wordDoc;
@@ -27,8 +28,19 @@ export default function Game({ wordDoc, words }: GamePropsDTO) {
     "A", "S", "D", "F", "G", "H", "J", "K", "L", "⌫",
     "Z", "X", "C", "V", "B", "N", "M", "ENTER",
   ];
+  const [showConfetti, setShowConfetti] = useState(false);
+
   const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  useEffect(() => {
+    const { storageGame, storageLine, storageResult } = LocalStorage.getGameState();
+    if (storageGame) {
+      setGame(storageGame);
+      setLine(storageLine);
+      setGameResult(storageResult);
+    }
+  }, []);
 
   function handleKeyboard(key: string) {
     if (gameResult) return;
@@ -88,13 +100,23 @@ export default function Game({ wordDoc, words }: GamePropsDTO) {
       }
     }
 
+    let auxGameResult = gameResult;
     const corrects = copy[line].filter(l => l.feedback == FeedbackEnum.CORRECT).length;
     if (corrects == word.length || line == 5) {
-      setGameResult(corrects == word.length ? GameResultEnum.SUCCESS : GameResultEnum.FAILED);
-    } else {
-      updatePosition(line + 1, 0);
+      if (corrects == word.length) {
+        setShowConfetti(true);
+        auxGameResult = GameResultEnum.SUCCESS;
+      } else {
+        auxGameResult = GameResultEnum.FAILED;
+      }
+      onOpen();
+      setGameResult(auxGameResult);
     }
+
+    const nextLine = line + 1;
+    updatePosition(nextLine, 0);
     setGame(copy);
+    LocalStorage.setGameState(copy, nextLine, auxGameResult);
   }
 
   function gameStyle(f: FeedbackEnum) {
@@ -116,13 +138,9 @@ export default function Game({ wordDoc, words }: GamePropsDTO) {
     return styles.defaultLetter;
   }
 
-  useEffect(() => {
-    if (gameResult) onOpen();
-  }, [gameResult]);
-
   return (
     <>
-      <Confetti fire={gameResult == GameResultEnum.SUCCESS} />
+      <Confetti fire={showConfetti} />
 
       {isOpen && <GameResultModal
         game={game}

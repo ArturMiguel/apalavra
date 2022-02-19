@@ -5,3 +5,7 @@
 Inspirado nos jogos [Wordle](https://www.nytimes.com/games/wordle/index.html), [Termo](https://term.ooo/) e [Letreco](https://www.gabtoschi.com/letreco/).
 
 Desenvolvido com [Next.js](https://nextjs.org/) e [Chakra UI](https://chakra-ui.com/).
+
+# Licença
+
+O código fonte está disponibilizado conforme a licença MIT. [MIT](./LICENSE)

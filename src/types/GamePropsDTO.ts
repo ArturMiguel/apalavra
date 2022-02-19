@@ -1,4 +1,6 @@
+import { WordDocDTO } from "./WordDocDTO";
+
 export interface GamePropsDTO {
-    word: string;
+    wordDoc: WordDocDTO;
     words: string[];
 }

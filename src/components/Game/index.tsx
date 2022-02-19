@@ -7,8 +7,10 @@ import styles from "./styles.module.scss";
 import GameResultModal from "../GameResultModal";
 import { useDisclosure, useToast } from '@chakra-ui/react'
 import Confetti from "../Confetti";
+import Clock from "../Clock";
 
-export default function Game({ word, words }: GamePropsDTO) {
+export default function Game({ wordDoc, words }: GamePropsDTO) {
+  const { word, sequence } = wordDoc;
   const [game, setGame] = useState<GameDTO[][]>(
     Array.from({ length: 6 }, () => Array.from({ length: word.length }, () => {
       return {
@@ -129,9 +131,13 @@ export default function Game({ word, words }: GamePropsDTO) {
         word={word}
         onClose={onClose}
         isOpen={isOpen}
+        sequence={sequence}
       />}
 
       <div className={styles.container} onClick={() => gameResult && onOpen()}>
+        <p style={{ fontSize: "0.9rem", marginBottom: "0.5rem" }}>
+          Próxima palavra em <Clock />
+        </p>
         <div style={{
           display: "grid",
           gridTemplateColumns: `repeat(${word.length}, 3.5rem)`,

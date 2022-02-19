@@ -12,9 +12,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case "PUT":
       await DbConnection.getConnection();
       const random = words[Math.floor(Math.random() * words.length)];
+      const current = await DailyWord.findOne();
       await DailyWord.updateOne({}, {
         word: random,
-        unaccented: random.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        unaccented: random.normalize("NFD").replace(/[\u0300-\u036f]/g, ""),
+        sequence: (current.sequence || 0) + 1
       }, {
         upsert: true
       })

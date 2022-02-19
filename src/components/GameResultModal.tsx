@@ -4,7 +4,7 @@ import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, 
 import React from "react";
 import copy from "copy-to-clipboard";
 
-export default function GameResultModal({ game, result, line, word, isOpen, onClose }) {
+export default function GameResultModal({ game, result, line, word, isOpen, onClose, sequence }) {
   const toast = useToast();
 
   const shareText = game.slice(0, line + 1).map((pos, l) => pos.map((_, c) => {
@@ -17,7 +17,7 @@ export default function GameResultModal({ game, result, line, word, isOpen, onCl
   })).join().replace(/,/g, "");
 
   function handleShare() {
-    const msg = `Joguei apalavra.vercel.app\n\nTentativa ${line + 1}/6\n\n${shareText}`
+    const msg = `Joguei https://apalavra.app #${sequence}\n\nTentativa ${line + 1}/6\n\n${shareText}`
     copy(msg);
     onClose();
     toast({
@@ -38,9 +38,12 @@ export default function GameResultModal({ game, result, line, word, isOpen, onCl
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {result == GameResultEnum.FAILED && <div style={{ textAlign: "center" }}>A palavra era &quot;{word}&quot;</div>}
+          <Stack spacing="1rem" style={{ textAlign: "center" }}>
+            {result == GameResultEnum.FAILED &&
+              <div>A palavra era <p style={{ fontWeight: "bold", fontSize: "1.5rem" }}>{word}</p></div>
+            }
+          </Stack>
         </ModalBody>
-
         <ModalFooter alignItems="center">
           <Stack textAlign="center" width="100%">
             <Button colorScheme="blue" mr={3} onClick={handleShare}>

@@ -6,7 +6,7 @@ import { DbConnection } from "../db/connection";
 import { WordDocDTO } from "../types/WordDocDTO";
 import words from "../words";
 
-export default function Home({ wordDoc, words }) {
+export default function Home({ wordDoc, words, sequence }) {
   return (
     <div>
       <Header />
@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       wordDoc: JSON.parse(JSON.stringify(wordDocument)),
-      words: words.map(w => w.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
+      words: words.map(w => w.normalize('NFD').replace(/[\u0300-\u036f]/g, '')),
     }
   }
 }

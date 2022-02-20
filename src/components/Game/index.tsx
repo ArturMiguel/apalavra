@@ -8,7 +8,7 @@ import GameResultModal from "../GameResultModal";
 import { useDisclosure, useToast } from '@chakra-ui/react'
 import Confetti from "../Confetti";
 import Clock from "../Clock";
-import { LocalStorage } from "../../services/LocalStorage";
+import { LocalStorageService } from "../../services/LocalStorageService";
 
 export default function Game({ wordDoc, words }: GamePropsDTO) {
   const { word, sequence } = wordDoc;
@@ -22,7 +22,7 @@ export default function Game({ wordDoc, words }: GamePropsDTO) {
   );
   const [line, setLine] = useState(0);
   const [column, setColumn] = useState(0);
-  const [gameResult, setGameResult] = useState<GameResultEnum>(null);
+  const [gameResult, setGameResult] = useState<GameResultEnum>(GameResultEnum.IN_PROGRESS);
   const keys = [
     "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
     "A", "S", "D", "F", "G", "H", "J", "K", "L", "⌫",
@@ -34,16 +34,25 @@ export default function Game({ wordDoc, words }: GamePropsDTO) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
-    const { storageGame, storageLine, storageResult } = LocalStorage.getGameState();
-    if (storageGame) {
-      setGame(storageGame);
-      setLine(storageLine);
-      setGameResult(storageResult);
-    }
+    loadGameFromStorage();
   }, []);
 
+  function loadGameFromStorage() {
+    if (sequence != LocalStorageService.getGameSequence()) {
+      LocalStorageService.clear();
+    } else {
+      const { storageGame, storageLine, storageResult } = LocalStorageService.getGameState();
+      if (storageGame) {
+        setGame(storageGame);
+        setLine(storageLine);
+        setGameResult(storageResult);
+      }
+    }
+    LocalStorageService.setGameSequence(sequence);
+  }
+
   function handleKeyboard(key: string) {
-    if (gameResult) return;
+    if (gameResult != GameResultEnum.IN_PROGRESS) return;
     if (key == "ENTER") return handleEnter();
     if (key == "⌫") return handleClear();
     return handleKey(key);
@@ -116,7 +125,7 @@ export default function Game({ wordDoc, words }: GamePropsDTO) {
     const nextLine = line + 1;
     updatePosition(nextLine, 0);
     setGame(copy);
-    LocalStorage.setGameState(copy, nextLine, auxGameResult);
+    LocalStorageService.setGameState(copy, nextLine, auxGameResult);
   }
 
   function gameStyle(f: FeedbackEnum) {
@@ -152,7 +161,7 @@ export default function Game({ wordDoc, words }: GamePropsDTO) {
         sequence={sequence}
       />}
 
-      <div className={styles.container} onClick={() => gameResult && onOpen()}>
+      <div className={styles.container} onClick={() => gameResult != GameResultEnum.IN_PROGRESS && onOpen()}>
         <p style={{ fontSize: "0.9rem", marginBottom: "0.5rem" }}>
           Próxima palavra em <Clock />
         </p>

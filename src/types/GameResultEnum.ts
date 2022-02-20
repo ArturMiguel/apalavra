@@ -1,4 +1,5 @@
 export enum GameResultEnum {
-    "SUCCESS" = "S",
-    "FAILED" = "F"
+    SUCCESS = "SUCCESS",
+    FAILED = "FAILED",
+    IN_PROGRESS = "IN_PROGRESS"
 }

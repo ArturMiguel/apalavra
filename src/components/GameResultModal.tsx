@@ -7,7 +7,7 @@ import copy from "copy-to-clipboard";
 export default function GameResultModal({ game, result, line, word, isOpen, onClose, sequence }) {
   const toast = useToast();
 
-  const shareText = game.slice(0, line + 1).map((pos, l) => pos.map((_, c) => {
+  const shareText = game.slice(0, line).map((pos, l) => pos.map((_, c) => {
     let str = "";
     if (pos[c].feedback == FeedbackEnum.CORRECT) str += "🟩";
     else if (pos[c].feedback == FeedbackEnum.PARTIAL) str += "🟧";
@@ -17,7 +17,7 @@ export default function GameResultModal({ game, result, line, word, isOpen, onCl
   })).join().replace(/,/g, "");
 
   function handleShare() {
-    const msg = `Joguei https://apalavra.app #${sequence}\n\nTentativa ${line + 1}/6\n\n${shareText}`
+    const msg = `Joguei https://apalavra.app #${sequence}\n\nTentativa ${line}/6\n\n${shareText}`
     copy(msg);
     onClose();
     toast({

@@ -3,6 +3,7 @@ import { GameResultEnum } from "../types/GameResultEnum";
 import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Stack, useToast } from "@chakra-ui/react";
 import React from "react";
 import copy from "copy-to-clipboard";
+import Clock from "./Clock";
 
 export default function GameResultModal({ game, result, line, word, isOpen, onClose, sequence }) {
   const toast = useToast();
@@ -33,20 +34,24 @@ export default function GameResultModal({ game, result, line, word, isOpen, onCl
     <Modal isOpen={isOpen} onClose={onClose} isCentered={true}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          {result == GameResultEnum.SUCCESS ? "Parabéns. Você acertou!" : "Que pena. Você falhou!"}
-        </ModalHeader>
-        <ModalCloseButton />
         <ModalBody>
-          <Stack spacing="1rem" style={{ textAlign: "center" }}>
-            {result == GameResultEnum.FAILED &&
-              <div>A palavra era <p style={{ fontWeight: "bold", fontSize: "1.5rem" }}>{word}</p></div>
-            }
+          <Stack spacing="0.5rem" textAlign="center">
+            <div>
+              <h1 style={{ fontSize: "2rem" }}>
+                {result == GameResultEnum.SUCCESS ? "Você acertou!" : "Você não acertou!"}
+              </h1>
+            </div>
+            <div>A palavra era: <b>{word}</b></div>
+            <div>Tentativa: {line} de 6</div>
+            <div>
+              <p>Próxima palavra em:</p>
+              <Clock style={{ fontSize: "2rem" }} />
+            </div>
           </Stack>
         </ModalBody>
         <ModalFooter alignItems="center">
           <Stack textAlign="center" width="100%">
-            <Button colorScheme="blue" mr={3} onClick={handleShare}>
+            <Button colorScheme="blue" onClick={handleShare}>
               Copiar resultado
             </Button>
             <Button variant="outline" onClick={onClose}>

@@ -18,7 +18,7 @@ export default function GameResultModal({ game, result, line, word, isOpen, onCl
   })).join().replace(/,/g, "");
 
   function handleShare() {
-    const msg = `Joguei https://apalavra.app #${sequence}\n\nTentativa ${line}/6\n\n${shareText}`
+    const msg = `Joguei https://apalavra.arturmr.dev #${sequence}\n\nTentativa ${line}/6\n\n${shareText}`
     copy(msg);
     onClose();
     toast({
